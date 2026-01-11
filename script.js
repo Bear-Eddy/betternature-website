@@ -26,30 +26,33 @@ document.addEventListener('DOMContentLoaded', function() {
         setLoading(true);
 
         try {
-            // For now, we'll simulate a successful submission
-            // Replace this with your actual form handling service
-            // Options: Formspree, Netlify Forms, ConvertKit, Mailchimp, etc.
+            // Submit to Formspree
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (response.ok) {
+                showMessage("You're on the list. We'll be in touch.", 'success');
+                form.reset();
 
-            // Store email in localStorage as backup (for demo)
-            const waitlist = JSON.parse(localStorage.getItem('betternature_waitlist') || '[]');
-            if (!waitlist.includes(email)) {
-                waitlist.push(email);
-                localStorage.setItem('betternature_waitlist', JSON.stringify(waitlist));
-            }
-
-            // Success!
-            showMessage("You're on the list. We'll be in touch.", 'success');
-            form.reset();
-
-            // Track conversion (add your analytics here)
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'sign_up', {
-                    'event_category': 'waitlist',
-                    'event_label': 'landing_page'
-                });
+                // Track conversion (add your analytics here)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'sign_up', {
+                        'event_category': 'waitlist',
+                        'event_label': 'landing_page'
+                    });
+                }
+            } else {
+                const data = await response.json();
+                if (data.errors) {
+                    showMessage(data.errors.map(e => e.message).join(', '), 'error');
+                } else {
+                    showMessage('Something went wrong. Please try again.', 'error');
+                }
             }
 
         } catch (error) {

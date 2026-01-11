@@ -408,6 +408,21 @@ body {
     color: var(--text-tertiary);
 }
 
+.footer-links {
+    margin-top: var(--spacing-l);
+}
+
+.footer-links a {
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--burnt-orange);
+}
+
 /* ================================
    Responsive Adjustments
    ================================ */
